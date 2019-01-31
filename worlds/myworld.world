@@ -20,4 +20,17 @@
 
   </world>
  
+   <rendering:gui>
+    <type>fltk</type>
+    <size>480 320</size>
+    <pos>0 0</pos>
+    <frames>
+      <row height="100%">
+        <camera width="100%">
+          <xyz>0.3 0 3</xyz>
+          <rpy>0 90 90</rpy>
+        </camera>
+      </row>
+    </frames>
+  </rendering:gui>
 </sdf>
