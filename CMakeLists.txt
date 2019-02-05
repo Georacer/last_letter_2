@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.10.2)
 
 # Enforce C++11 compiler flags
-#include(CheckCXXCompilerFlag)
-#CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-#CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-#if(COMPILER_SUPPORTS_CXX11)
-#    set(CMAKE_CXX_FLAGS "-std=c++11")
-#elseif(COMPILER_SUPPORTS_CXX0X)
-#    set(CMAKE_CXX_FLAGS "-std=c++0x")
-#else()
-#    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-#endif()
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+  set(CMAKE_CXX_FLAGS "-std=c++11")
+elseif(COMPILER_SUPPORTS_CXX0X)
+  set(CMAKE_CXX_FLAGS "-std=c++0x")
+#else()                                       # break compiler with catkin build
+#  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
 
 project(last_letter_2)
 
@@ -42,10 +42,10 @@ add_message_files(
 
 add_service_files(
   FILES
-apply_wrench_srv.srv
-get_model_states_srv.srv
-get_control_signals_srv.srv
-airdata_srv.srv
+  apply_wrench_srv.srv
+  get_model_states_srv.srv
+  get_control_signals_srv.srv
+  airdata_srv.srv
 )
 
 generate_messages(
@@ -56,8 +56,8 @@ generate_messages(
 
 
 catkin_package(DEPENDS
-   CATKIN_DEPENDS  message_runtime
-   std_msgs
+  CATKIN_DEPENDS  message_runtime
+  std_msgs
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})

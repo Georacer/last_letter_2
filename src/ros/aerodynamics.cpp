@@ -1,7 +1,7 @@
 
 Aerodynamics::Aerodynamics(Model *parent)
 {
-    model=parent;
+    model = parent;
     initParam();
 }
 
@@ -16,9 +16,9 @@ void Aerodynamics::calcAdditionalData()
 {
 
     // airspeed, alpha, beta
-    float u_r = model->model_states.u-model->airdata.wind_x;
-    float v_r = model->model_states.v-model->airdata.wind_y;
-    float w_r = model->model_states.w-model->airdata.wind_z;
+    float u_r = model->model_states.u - model->airdata.wind_x;
+    float v_r = model->model_states.v - model->airdata.wind_y;
+    float w_r = model->model_states.w - model->airdata.wind_z;
     airspeed = sqrt(pow(u_r, 2) + pow(v_r, 2) + pow(w_r, 2));
     alpha = atan2(w_r, u_r);
     beta;
@@ -45,7 +45,7 @@ void Aerodynamics::calcForces()
     float sigmoid = (1 + exp(-M * (alpha - a0)) + exp(M * (alpha + a0))) / (1 + exp(-M * (alpha - a0))) / (1 + exp(M * (alpha + a0)));
     if (isnan(sigmoid))
         sigmoid = 0;
-    float linear = (1.0 - sigmoid) * (c_lift_0 + c_lift_a * alpha);							//Lift at small AoA
+    float linear = (1.0 - sigmoid) * (c_lift_0 + c_lift_a * alpha);                         //Lift at small AoA
     float flatPlate = sigmoid * (2 * copysign(1, alpha) * pow(sin(alpha), 2) * cos(alpha)); //Lift beyond stall
     float c_lift_alpha = linear + flatPlate;
 
@@ -55,9 +55,9 @@ void Aerodynamics::calcForces()
     float ca = cos(alpha);
     float sa = sin(alpha);
 
-    float p =model->model_states.p;
-    float q =model->model_states.q;
-    float r =model->model_states.r;
+    float p = model->model_states.p;
+    float q = model->model_states.q;
+    float r = model->model_states.r;
     float delta_a = model->control_signals.delta_a;
     float delta_e = model->control_signals.delta_e;
     float delta_r = model->control_signals.delta_r;
@@ -85,29 +85,27 @@ void Aerodynamics::calcTorques()
     float ca = cos(alpha);
     float sa = sin(alpha);
 
-    float p =model->model_states.p;
-    float q =model->model_states.q;
-    float r =model->model_states.r;
+    float p = model->model_states.p;
+    float q = model->model_states.q;
+    float r = model->model_states.r;
     float delta_a = model->control_signals.delta_a;
     float delta_e = model->control_signals.delta_e;
     float delta_r = model->control_signals.delta_r;
     float delta_t = model->control_signals.delta_t;
 
     if (airspeed == 0)
-        {
-            aero_wrenches.l = 0;
-            aero_wrenches.m = 0;
-            aero_wrenches.n = 0;
-        }
-        else
-        {
-            aero_wrenches.l = qbar * (b * (c_l_0 + c_l_b * beta + c_l_p * b / 2 / airspeed * p + c_l_r * b / 2 / airspeed * r + c_l_deltaa * delta_a + c_l_deltar * delta_r));
-            aero_wrenches.m = qbar * (c * (c_m_0 + c_m_a * alpha + c_m_q * c / 2 / airspeed * q + c_m_deltae * delta_e));
-            aero_wrenches.n = qbar * (b * (c_n_0 + c_n_b * beta + c_n_p * b / 2 / airspeed * p + c_n_r * b / 2 / airspeed * r + c_n_deltaa * delta_a + c_n_deltar * delta_r));
-        }
+    {
+        aero_wrenches.l = 0;
+        aero_wrenches.m = 0;
+        aero_wrenches.n = 0;
+    }
+    else
+    {
+        aero_wrenches.l = qbar * (b * (c_l_0 + c_l_b * beta + c_l_p * b / 2 / airspeed * p + c_l_r * b / 2 / airspeed * r + c_l_deltaa * delta_a + c_l_deltar * delta_r));
+        aero_wrenches.m = qbar * (c * (c_m_0 + c_m_a * alpha + c_m_q * c / 2 / airspeed * q + c_m_deltae * delta_e));
+        aero_wrenches.n = qbar * (b * (c_n_0 + c_n_b * beta + c_n_p * b / 2 / airspeed * p + c_n_r * b / 2 / airspeed * r + c_n_deltaa * delta_a + c_n_deltar * delta_r));
+    }
 }
-
-
 
 void Aerodynamics::initParam()
 {

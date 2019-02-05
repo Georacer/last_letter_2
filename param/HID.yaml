@@ -8,7 +8,6 @@
 /HID/buttons: [-1,   -1,   -1,   -1,   -1,    0,   -1,   -1,   -1,    6,   -1  ]
 /HID/throws:  [-1.0, -1.0,  1.0, -1.0,  1.0,  1.0,  1.0,  0.0,  0.0,  1.0,  0.0]
 
-
 # Mixer id number, see joy2chan.cpp code:
 # 0 for no mixing
 # 1 for airplane mixing

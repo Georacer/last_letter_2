@@ -80,7 +80,6 @@ class Model
     void calcWrenches();
     void applyWrenches();
     void simulationStep();
-
 };
 
 class Master

@@ -60,7 +60,7 @@ public:
     // Connect a callback to the world update start signal.
     this->updateConnection = event::Events::ConnectWorldUpdateBegin(std::bind(&stepper::OnUpdate, this));
     ros::AdvertiseServiceOptions so = (ros::AdvertiseServiceOptions::create<last_letter_2::apply_wrench_srv>("last_letter_2/step",
-                                                                                                         boost::bind(&stepper::give_step, this, _1, _2), ros::VoidPtr(), &this->rosQueue));
+                                                                                                             boost::bind(&stepper::give_step, this, _1, _2), ros::VoidPtr(), &this->rosQueue));
     this->srv_ = this->rosNode->advertiseService(so);
   }
 
