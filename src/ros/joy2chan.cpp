@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
 #include <cstdlib>
-#include <last_letter_2/Joystick_input.h>
+#include <last_letter_2/joystick_input.h>
 
 ros::Publisher pub;
 
@@ -11,9 +11,9 @@ double throwIndex[11];
 int mixerid;
 
 // Mixer function
-last_letter_2::Joystick_input mixer(double *input, int mixerid)
+last_letter_2::joystick_input mixer(double *input, int mixerid)
 {
-    last_letter_2::Joystick_input channels;
+    last_letter_2::joystick_input channels;
     int i;
     switch (mixerid)
     {
@@ -70,7 +70,7 @@ last_letter_2::Joystick_input mixer(double *input, int mixerid)
 
 void joy2chan(sensor_msgs::Joy joyMsg)
 {
-    last_letter_2::Joystick_input channels;
+    last_letter_2::joystick_input channels;
     double input[11];
     int i;
     for (i = 0; i < 11; i++)
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "joystick_node");
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("joy", 1, joy2chan);
-    pub = n.advertise<last_letter_2::Joystick_input>("last_letter_2/rawPWM", 1);
+    pub = n.advertise<last_letter_2::joystick_input>("last_letter_2/rawPWM", 1);
 
     // Read the controller configuration parameters from the HID.yaml file
     XmlRpc::XmlRpcValue listInt, listDouble;

@@ -2,4 +2,4 @@
 
 std_msgs/Empty empty
 ---
-last_letter_2/Model_states model_states
+last_letter_2/model_states model_states

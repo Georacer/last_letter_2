@@ -1,11 +1,11 @@
 #include <ros/ros.h>
 #include <last_letter_2/get_control_signals_srv.h>
-#include <last_letter_2/Control_signals.h>
+#include <last_letter_2/control_signals.h>
 
 
 float delta_a=0, delta_e=0, delta_r=0, delta_t=0;
 
-void signal_callback(const last_letter_2::Control_signals::ConstPtr &msg)
+void signal_callback(const last_letter_2::control_signals::ConstPtr &msg)
 {
     delta_a=msg->delta_a;
     delta_e=msg->delta_e;

@@ -1,8 +1,8 @@
 #include <ros/ros.h>
 #include <cstdlib>
-#include <last_letter_2/Joystick_input.h>
-#include <last_letter_2/Input_signals.h>
-#include <last_letter_2/Control_signals.h>
+#include <last_letter_2/joystick_input.h>
+#include <last_letter_2/input_signals.h>
+#include <last_letter_2/control_signals.h>
 
 ros::Publisher control_signals_pub;
 
@@ -11,10 +11,10 @@ int chanAileron, chanElevator, chanRudder, chanThrottle;
 int id = 1;
 double deltaa_max, deltae_max, deltar_max;
 
-last_letter_2::Input_signals input_signals;
-last_letter_2::Control_signals joy_control_signals;
+last_letter_2::input_signals input_signals;
+last_letter_2::control_signals joy_control_signals;
 
-void chan2input(last_letter_2::Joystick_input msg)
+void chan2input(last_letter_2::joystick_input msg)
 {
     //Convert PPM to radians
     joy_control_signals.delta_a = deltaa_max * (double)(msg.value[chanAileron] - 1500) / 500;
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "chan2rpy");
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("last_letter_2/rawPWM", 1, chan2input);
-    control_signals_pub = n.advertise<last_letter_2::Control_signals>("last_letter_2/Joy_signals", 1);
+    control_signals_pub = n.advertise<last_letter_2::control_signals>("last_letter_2/Joy_signals", 1);
 
 
     char paramMsg[50];

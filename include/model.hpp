@@ -3,10 +3,10 @@
 class Model
 {
     public:
-        last_letter_2::Model_states model_states;
-        last_letter_2::Air_data airdata;
-        last_letter_2::Control_signals control_signals;
-        last_letter_2::Model_wrenches model_wrenches;
+        last_letter_2::model_states model_states;
+        last_letter_2::air_data airdata;
+        last_letter_2::control_signals control_signals;
+        last_letter_2::model_wrenches model_wrenches;
 
         ros::NodeHandle nh;
         ros::ServiceClient states_client;

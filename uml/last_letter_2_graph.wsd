@@ -1,14 +1,14 @@
 @startuml
 
 class msgs{
-        Joystick_input
-        Input_signals
-        Control_signals
-        Model_states
-        Model_wrenches
-        Air_data
-        Aero_wrenches
-        Prop_wrenches
+        joystick_input
+        input_signals
+        control_signals
+        model_states
+        model_wrenches
+        air_data
+        aero_wrenches
+        prop_wrenches
 }
 
 class services{

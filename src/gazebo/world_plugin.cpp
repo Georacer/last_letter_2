@@ -5,7 +5,7 @@
 #include "ros/callback_queue.h"
 #include <boost/bind.hpp>
 #include <last_letter_2/apply_wrench_srv.h>
-#include <last_letter_2/Model_wrenches.h>
+#include <last_letter_2/model_wrenches.h>
 #include <rosgraph_msgs/Clock.h>
 #include <ctime> // for timer
 #include <ros/service.h>

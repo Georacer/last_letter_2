@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <last_letter_2/airdata_srv.h>
-#include <last_letter_2/Air_data.h>
-#include <last_letter_2/Model_states.h>
+#include <last_letter_2/air_data.h>
+#include <last_letter_2/model_states.h>
 #include <ignition/math/Vector3.hh>
 #include <geometry_msgs/Vector3.h>
 #include <stdio.h>
@@ -15,8 +15,8 @@ ros::Publisher pub;
 class Environment
 {
     public:
-        last_letter_2::Air_data airdata;
-        last_letter_2::Model_states states;
+        last_letter_2::air_data airdata;
+        last_letter_2::model_states states;
         double windDir, windRef, windRefAlt,surfSmooth, kwind;
         double T0; //Temperature at sea level, degrees K
         double P0; //Pressure at sea level, in HG
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
     Environment env_object;
     ros::NodeHandle nh;
     ros::ServiceServer envir_server=nh.advertiseService("last_letter_2/airdata", &Environment::calc_airdata, &env_object);
-    pub = nh.advertise<last_letter_2::Air_data>("last_letter_2/Environment", 1);
+    pub = nh.advertise<last_letter_2::air_data>("last_letter_2/Environment", 1);
 
 
     while(ros::ok())

@@ -6,10 +6,10 @@
 #include <gazebo/physics/physics.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/math/Quaternion.hh>
-#include <last_letter_2/Model_states.h>
+#include <last_letter_2/model_states.h>
 #include <last_letter_2/apply_wrench_srv.h>
 #include <last_letter_2/get_model_states_srv.h>
-#include <last_letter_2/Model_wrenches.h>
+#include <last_letter_2/model_wrenches.h>
 #include <boost/bind.hpp>
 #include <ctime> // for timer
 #include <iostream>
@@ -71,7 +71,7 @@ class model_plugin : public ModelPlugin
                                                                                         boost::bind(&model_plugin::return_states, this, _1, _2), ros::VoidPtr(), &this->states_rosQueue));
         this->return_states_server = this->rosNode->advertiseService(so);
         // Publish code
-        this->state_pub = this->rosNode->advertise<last_letter_2::Model_states>("last_letter_2/model_states", 1000);
+        this->state_pub = this->rosNode->advertise<last_letter_2::model_states>("last_letter_2/model_states", 1000);
     }
 
     //  ROS helper function that processes messages
@@ -125,7 +125,7 @@ class model_plugin : public ModelPlugin
         ignition::math::Vector3d position;
         position = model->GetLink("airfoil")->WorldPose().Pos();
 
-        last_letter_2::Model_states model_states;
+        last_letter_2::model_states model_states;
         model_states.header.stamp = ros::Time::now();
         model_states.x = position[0];
         model_states.y = position[1];
