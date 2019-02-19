@@ -27,7 +27,7 @@
         args="-z 1.0 -Y 2.1  -urdf -model plane -param robot_description" respawn="false" output="screen" /> 
           
   <rosparam command="load" file="$(find last_letter_2)/config/param/HID.yaml" />
-  <rosparam command="load" file="$(find last_letter_2)/config/param/aircrafts/HCUAV/aerodynamics.yaml" />
+  <rosparam command="load" file="$(find last_letter_2)/config/param/aircrafts/skywalker_2013/aerodynamics.yaml" />
   <rosparam command="load" file="$(find last_letter_2)/config/param/environment.yaml" />
   <rosparam command="load" file="$(find last_letter_2)/config/param/world.yaml" />
   <rosparam command="load" file="$(find last_letter_2)/config/param/simulation.yaml" />
