@@ -6,6 +6,7 @@
     last_letter_2_msgs::air_data airdata;
     last_letter_2_msgs::control_signals control_signals;
     last_letter_2_msgs::model_wrenches model_wrenches;
+    double airspeed,alpha,beta;
     
     ros::NodeHandle nh;
     ros::ServiceClient states_client;
@@ -28,6 +29,7 @@
     void getStates();
     void getControlSignals();
     void getAirdata();
+    void calcAdditionalData();
     void calcWrenches();
     void applyWrenches();
     void simulationStep();

@@ -3,7 +3,7 @@
 #include "master.cpp"
 #include "dynamics.cpp"
 #include "aerodynamics.cpp"
-#include "propulsion.cpp"
+#include "propulsion/propulsion.cpp"
 #include "factory.cpp"
 
 int main(int argc, char **argv)

@@ -9,37 +9,10 @@ Aerodynamics::Aerodynamics(Model *parent)
 
 void Aerodynamics::calcWrench()
 {
-    calcAdditionalData();
     calcForces();
     calcTorques();
 }
 
-void Aerodynamics::calcAdditionalData()
-{
-
-    // airspeed, alpha, beta
-    double u_r = model->model_states.u - model->airdata.wind_x;
-    double v_r = model->model_states.v - model->airdata.wind_y;
-    double w_r = model->model_states.w - model->airdata.wind_z;
-    airspeed = sqrt(pow(u_r, 2) + pow(v_r, 2) + pow(w_r, 2));
-    alpha = atan2(w_r, u_r);
-    beta;
-    if (u_r == 0)
-    {
-        if (v_r == 0)
-        {
-            beta = 0;
-        }
-        else
-        {
-            beta = asin(v_r / abs(v_r));
-        }
-    }
-    else
-    {
-        beta = atan2(v_r, u_r);
-    }
-}
 
 // Class NoAero contructor
 NoAerodynamics::NoAerodynamics(Model *parent) : Aerodynamics(parent)
@@ -65,13 +38,13 @@ StdLinearAero::StdLinearAero(Model *parent) : Aerodynamics(parent)
 
 void StdLinearAero::calcForces()
 {
-    double qbar = 0.5 * rho * pow(airspeed, 2) * s;
+    double qbar = 0.5 * rho * pow(model->airspeed, 2) * s;
 
-    double c_lift_alpha = liftCoeff(alpha);
-    double c_drag_alpha = dragCoeff(alpha);
+    double c_lift_alpha = liftCoeff(model->alpha);
+    double c_drag_alpha = dragCoeff(model->alpha);
 
-    double ca = cos(alpha);
-    double sa = sin(alpha);
+    double ca = cos(model->alpha);
+    double sa = sin(model->alpha);
 
     double p = model->model_states.p;
     double q = model->model_states.q;
@@ -82,7 +55,7 @@ void StdLinearAero::calcForces()
     double delta_t = model->control_signals.delta_t;
 
     // force calculation - - - - - - - - - - -expressed to body frame
-    if (airspeed == 0)
+    if (model->airspeed == 0)
     {
         aero_wrenches.drag = 0;
         aero_wrenches.lift = 0;
@@ -90,18 +63,18 @@ void StdLinearAero::calcForces()
     }
     else
     {
-        aero_wrenches.drag = qbar * ((-c_drag_alpha * ca + c_lift_alpha * sa) + (-c_drag_q * ca + c_lift_q * sa) * 0.5 / airspeed * c * q + (-c_drag_deltae * ca + c_lift_deltae * sa) * delta_e);
-        aero_wrenches.lift = qbar * ((-c_drag_alpha * sa - c_lift_alpha * ca) + (-c_drag_q * sa - c_lift_q * ca) * 0.5 / airspeed * c * q + (-c_drag_deltae * sa - c_lift_deltae * ca) * delta_e);
-        aero_wrenches.fy = qbar * (c_y_0 + c_y_b * beta + c_y_p * b / 2 / airspeed * p + c_y_r * b / 2 / airspeed * r + c_y_deltaa * delta_a + c_y_deltar * delta_r);
+        aero_wrenches.drag = qbar * ((-c_drag_alpha * ca + c_lift_alpha * sa) + (-c_drag_q * ca + c_lift_q * sa) * 0.5 / model->airspeed * c * q + (-c_drag_deltae * ca + c_lift_deltae * sa) * delta_e);
+        aero_wrenches.lift = qbar * ((-c_drag_alpha * sa - c_lift_alpha * ca) + (-c_drag_q * sa - c_lift_q * ca) * 0.5 / model->airspeed * c * q + (-c_drag_deltae * sa - c_lift_deltae * ca) * delta_e);
+        aero_wrenches.fy = qbar * (c_y_0 + c_y_b * model->beta + c_y_p * b / 2 / model->airspeed * p + c_y_r * b / 2 / model->airspeed * r + c_y_deltaa * delta_a + c_y_deltar * delta_r);
     }
 }
 
 void StdLinearAero::calcTorques()
 {
-    double qbar = 0.5 * rho * pow(airspeed, 2) * s;
+    double qbar = 0.5 * rho * pow(model->airspeed, 2) * s;
 
-    double ca = cos(alpha);
-    double sa = sin(alpha);
+    double ca = cos(model->alpha);
+    double sa = sin(model->alpha);
 
     double p = model->model_states.p;
     double q = model->model_states.q;
@@ -111,7 +84,7 @@ void StdLinearAero::calcTorques()
     double delta_r = model->control_signals.delta_r;
     double delta_t = model->control_signals.delta_t;
 
-    if (airspeed == 0)
+    if (model->airspeed == 0)
     {
         aero_wrenches.l = 0;
         aero_wrenches.m = 0;
@@ -119,9 +92,9 @@ void StdLinearAero::calcTorques()
     }
     else
     {
-        aero_wrenches.l = qbar * (b * (c_l_0 + c_l_b * beta + c_l_p * b / 2 / airspeed * p + c_l_r * b / 2 / airspeed * r + c_l_deltaa * delta_a + c_l_deltar * delta_r));
-        aero_wrenches.m = qbar * (c * (c_m_0 + c_m_a * alpha + c_m_q * c / 2 / airspeed * q + c_m_deltae * delta_e));
-        aero_wrenches.n = qbar * (b * (c_n_0 + c_n_b * beta + c_n_p * b / 2 / airspeed * p + c_n_r * b / 2 / airspeed * r + c_n_deltaa * delta_a + c_n_deltar * delta_r));
+        aero_wrenches.l = qbar * (b * (c_l_0 + c_l_b * model->beta + c_l_p * b / 2 / model->airspeed * p + c_l_r * b / 2 / model->airspeed * r + c_l_deltaa * delta_a + c_l_deltar * delta_r));
+        aero_wrenches.m = qbar * (c * (c_m_0 + c_m_a * model->alpha + c_m_q * c / 2 / model->airspeed * q + c_m_deltae * delta_e));
+        aero_wrenches.n = qbar * (b * (c_n_0 + c_n_b * model->beta + c_n_p * b / 2 / model->airspeed * p + c_n_r * b / 2 / model->airspeed * r + c_n_deltaa * delta_a + c_n_deltar * delta_r));
     }
 }
 

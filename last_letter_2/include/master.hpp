@@ -1,7 +1,7 @@
 #include <last_letter_2_libs.hpp>
 #include "dynamics.hpp"
 #include "aerodynamics.hpp"
-#include "propulsion.hpp"
+#include "propulsion/propulsion.hpp"
 #include "factory.hpp"
 #include "model.hpp"
 

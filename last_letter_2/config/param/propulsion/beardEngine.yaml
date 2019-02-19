@@ -1,0 +1,11 @@
+# Airframe Propulsion Parameters
+# Motor types: 0 No motor, 1 Beard Engine, 2 Piston engine, 3 Electric Engine
+# Polynomial types: 0 1D, 1 2D, 2 cubic spline
+motor1/motorType: 1
+
+#motor Engine Parameters
+motor1/s_prop: 0.2027
+motor1/k_motor: 80
+motor1/k_t_p: 0.0
+motor1/k_omega: 20.0
+motor1/c_prop: 1.0

@@ -24,6 +24,7 @@ void Model::modelStep()
     getStates();
     getControlSignals();   // need to create control_singlas_server
     getAirdata();
+    calcAdditionalData();
     calcWrenches();
     applyWrenches();
     simulationStep();
@@ -121,6 +122,33 @@ void Model::getAirdata()
         ROS_ERROR("Service down, waiting reconnection...");
         airdata_client.waitForExistence();
         //		    connectToClient(); //Why this??
+    }
+}
+
+void Model::calcAdditionalData()
+{
+
+    // airspeed, alpha, beta
+    double u_r = model_states.u - airdata.wind_x;
+    double v_r = model_states.v - airdata.wind_y;
+    double w_r = model_states.w - airdata.wind_z;
+    airspeed = sqrt(pow(u_r, 2) + pow(v_r, 2) + pow(w_r, 2));
+    alpha = atan2(w_r, u_r);
+    beta;
+    if (u_r == 0)
+    {
+        if (v_r == 0)
+        {
+            beta = 0;
+        }
+        else
+        {
+            beta = asin(v_r / abs(v_r));
+        }
+    }
+    else
+    {
+        beta = atan2(v_r, u_r);
     }
 }
 
