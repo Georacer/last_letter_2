@@ -17,9 +17,13 @@ find_package(Boost REQUIRED)
 catkin_package(DEPENDS
   CATKIN_DEPENDS 
   std_msgs
+  INCLUDE_DIRS include
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
+include_directories(
+  include
+  include/propulsion
+ ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
 
 add_executable(joy2chan src/joy2chan.cpp) 
 add_executable(chan2basics src/chan2basics.cpp) 
