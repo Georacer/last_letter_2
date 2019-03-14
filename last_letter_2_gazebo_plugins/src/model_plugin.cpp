@@ -191,14 +191,14 @@ class model_plugin : public ModelPlugin
         model_states.y = position[1];
         model_states.z = position[2];
         model_states.roll = rotation[0];
-        model_states.pitch = -rotation[1];
-        model_states.yaw = -rotation[2];
+        model_states.pitch = rotation[1];
+        model_states.yaw = rotation[2];
         model_states.u = relLinVel[0];
-        model_states.v = -relLinVel[1];
-        model_states.w = -relLinVel[2];
+        model_states.v = relLinVel[1];
+        model_states.w = relLinVel[2];
         model_states.p = relAngVel[0];
-        model_states.q = -relAngVel[1];
-        model_states.r = -relAngVel[2];
+        model_states.q = relAngVel[1];
+        model_states.r = relAngVel[2];
         this->state_pub.publish(model_states);
     }
 };

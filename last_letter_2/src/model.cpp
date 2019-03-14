@@ -1,4 +1,3 @@
-
 Model::Model() : dynamics(this)
 {
     ros::service::waitForService("last_letter_2/model_states");
@@ -10,10 +9,10 @@ Model::Model() : dynamics(this)
     ros::service::waitForService("last_letter_2/step");
     sim_step_client = nh.serviceClient<last_letter_2_msgs::apply_wrench_srv>("last_letter_2/step", true);
     ros::service::waitForService("last_letter_2/airdata");
-    airdata_client=nh.serviceClient<last_letter_2_msgs::airdata_srv>("last_letter_2/airdata",true);
+    airdata_client = nh.serviceClient<last_letter_2_msgs::airdata_srv>("last_letter_2/airdata", true);
     // signals_publisher = nh.advertise<last_letter_2::Control_signals>("last_letter_2/control_signals_feedback", 1000);
 
-    ros::service::waitForService("/gazebo/pause_physics");      //pause gazebo to succeed synchronization with ros
+    ros::service::waitForService("/gazebo/pause_physics"); //pause gazebo to succeed synchronization with ros
     pauseGazebo = nh.serviceClient<std_srvs::Empty>("/gazebo/pause_physics");
     std_srvs::Empty emptySrv;
     pauseGazebo.call(emptySrv);
@@ -22,7 +21,7 @@ Model::Model() : dynamics(this)
 void Model::modelStep()
 {
     getStates();
-    getControlSignals();   // need to create control_singlas_server
+    getControlSignals(); // need to create control_singlas_server
     getAirdata();
     calcAirdataTriplet();
     calcWrenches();
@@ -34,7 +33,7 @@ void Model::getStates()
 {
     //call step states_srv
     std_msgs::Empty msg;
-    states_srv.request.empty=msg;
+    states_srv.request.empty = msg;
     if (states_client.isValid())
     {
         if (states_client.call(states_srv))
@@ -66,14 +65,22 @@ void Model::getStates()
     model_states.p = states_srv.response.model_states.p;
     model_states.q = states_srv.response.model_states.q;
     model_states.r = states_srv.response.model_states.r;
-    model_states.header.stamp=ros::Time::now();  // need fix
+
+    //the states exported from gazebo are expressed in NWU frame, but the calculations are based on NED frame 
+    //so convert gazebo data from NWU to NED to continue with calculations
+    frameConversion.NWUtoNED(model_states.x,model_states.y,model_states.z);
+    frameConversion.NWUtoNED(model_states.roll,model_states.pitch,model_states.yaw);
+    frameConversion.NWUtoNED(model_states.u,model_states.v,model_states.w);
+    frameConversion.NWUtoNED(model_states.p,model_states.q,model_states.r);
+
+    model_states.header.stamp = ros::Time::now(); // need fix
 }
 
 void Model::getControlSignals()
 {
     //call get_control_signals_srv
     std_msgs::Empty msg;
-    signals_srv.request.empty=msg;
+    signals_srv.request.empty = msg;
     if (control_signals_client.isValid())
     {
         if (control_signals_client.call(signals_srv))
@@ -93,16 +100,16 @@ void Model::getControlSignals()
         //		    connectToClient(); //Why this??
     }
     //get delta_e, delta_r, delta_a, delta_t
-    control_signals.delta_a=signals_srv.response.signals.delta_a;
-    control_signals.delta_e=signals_srv.response.signals.delta_e;
-    control_signals.delta_r=signals_srv.response.signals.delta_r;
-    control_signals.delta_t=signals_srv.response.signals.delta_t;
-    control_signals.header.stamp=ros::Time::now();  // need fix
+    control_signals.delta_a = signals_srv.response.signals.delta_a;
+    control_signals.delta_e = signals_srv.response.signals.delta_e;
+    control_signals.delta_r = signals_srv.response.signals.delta_r;
+    control_signals.delta_t = signals_srv.response.signals.delta_t;
+    control_signals.header.stamp = ros::Time::now(); // need fix
 }
 
 void Model::getAirdata()
 {
-    air_data.request.states=model_states;
+    air_data.request.states = model_states;
     if (airdata_client.isValid())
     {
         if (airdata_client.call(air_data))
@@ -121,11 +128,11 @@ void Model::getAirdata()
         airdata_client.waitForExistence();
         //		    connectToClient(); //Why this??
     }
-    airdata.wind_x=air_data.response.airdata.wind_x;
-    airdata.wind_y=air_data.response.airdata.wind_y;
-    airdata.wind_z=air_data.response.airdata.wind_z;
-    airdata.density=air_data.response.airdata.density;
-    airdata.temperature=air_data.response.airdata.temperature;
+    airdata.wind_x = air_data.response.airdata.wind_x;
+    airdata.wind_y = air_data.response.airdata.wind_y;
+    airdata.wind_z = air_data.response.airdata.wind_z;
+    airdata.density = air_data.response.airdata.density;
+    airdata.temperature = air_data.response.airdata.temperature;
 }
 
 void Model::calcAirdataTriplet()
@@ -164,11 +171,15 @@ void Model::applyWrenches()
 {
     model_wrenches.thrust = dynamics.propulsion->prop_wrenches.thrust; // y,z values with opposite sign
     model_wrenches.forces[0] = dynamics.aerodynamics->aero_wrenches.drag;
-    model_wrenches.forces[1] = -dynamics.aerodynamics->aero_wrenches.fy;
-    model_wrenches.forces[2] = -dynamics.aerodynamics->aero_wrenches.lift;
+    model_wrenches.forces[1] = dynamics.aerodynamics->aero_wrenches.fy;
+    model_wrenches.forces[2] = dynamics.aerodynamics->aero_wrenches.lift;
     model_wrenches.torques[0] = dynamics.aerodynamics->aero_wrenches.l + dynamics.propulsion->prop_wrenches.torque;
-    model_wrenches.torques[1] = -dynamics.aerodynamics->aero_wrenches.m;
-    model_wrenches.torques[2] = -dynamics.aerodynamics->aero_wrenches.n;
+    model_wrenches.torques[1] = dynamics.aerodynamics->aero_wrenches.m;
+    model_wrenches.torques[2] = dynamics.aerodynamics->aero_wrenches.n;
+
+    //convert data on NWU frame that links in gazebo are expressed 
+    frameConversion.NEDtoNWU(model_wrenches.forces[0],model_wrenches.forces[1],model_wrenches.forces[2]);
+    frameConversion.NEDtoNWU(model_wrenches.torques[0],model_wrenches.torques[1],model_wrenches.torques[2]);
 
     // prepare service to call - - - - - - - - - -
     apply_wrench_srv.request.model_wrenches = model_wrenches;

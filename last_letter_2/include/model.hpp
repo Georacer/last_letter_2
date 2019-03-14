@@ -1,4 +1,3 @@
-
  class Model
 {
   public:
@@ -24,6 +23,7 @@
     last_letter_2_msgs::apply_wrench_srv apply_wrench_srv;
 
     Dynamics dynamics;
+    FrameConversion frameConversion;
     // Airdata airdata;
     Model();
     void modelStep();
