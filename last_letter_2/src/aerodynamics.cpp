@@ -9,12 +9,12 @@ Aerodynamics::Aerodynamics(Model *parent)
 
 void Aerodynamics::calcWrench()
 {
-    calcAdditionalData();
+    loadAirdataTriplet();
     calcForces();
     calcTorques();
 }
 
-void Aerodynamics::calcAdditionalData()
+void Aerodynamics::loadAirdataTriplet()
 {
     // airspeed, alpha, beta
     airspeed= model->airspeed;

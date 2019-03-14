@@ -24,7 +24,7 @@ void Model::modelStep()
     getStates();
     getControlSignals();   // need to create control_singlas_server
     getAirdata();
-    calcAdditionalData();
+    calcAirdataTriplet();
     calcWrenches();
     applyWrenches();
     simulationStep();
@@ -128,7 +128,7 @@ void Model::getAirdata()
     airdata.temperature=air_data.response.airdata.temperature;
 }
 
-void Model::calcAdditionalData()
+void Model::calcAirdataTriplet()
 {
 
     // airspeed, alpha, beta

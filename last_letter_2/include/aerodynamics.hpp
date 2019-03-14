@@ -12,7 +12,7 @@ class Aerodynamics
     Aerodynamics(Model *);
     // ~Aerodynamics();
     void calcWrench();
-    void calcAdditionalData();
+    void loadAirdataTriplet();
     virtual void calcForces()=0;
     virtual void calcTorques()=0;
 };
