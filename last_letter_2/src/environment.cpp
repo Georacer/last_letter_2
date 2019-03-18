@@ -39,14 +39,11 @@ Environment::Environment()
     if(!ros::param::getCached("/world/deltaT", dt)) {ROS_FATAL("Invalid parameters for -deltaT- in param server!"); ros::shutdown();}
     if(!ros::param::getCached("/environment/Dryden/use", allowTurbulence)) {ROS_FATAL("Invalid parameters for -/environment/Dryden/use- in param server!"); ros::shutdown();}
 
-
     //initialize atmosphere stuff
     if(!ros::param::getCached("/environment/groundTemp", T0)) {ROS_FATAL("Invalid parameters for -/environment/groundTemp- in param server!"); ros::shutdown();}
     T0 += 274.15;
     if(!ros::param::getCached("/environment/groundPres", P0)) {ROS_FATAL("Invalid parameters for -/environment/groundPres- in param server!"); ros::shutdown();}
-
     if(!ros::param::getCached("/environment/rho", rho)) {ROS_FATAL("Invalid parameters for -/environment/rho- in param server!"); ros::shutdown();}
-
 
    //Initialize bias wind engine
     if(!ros::param::getCached("/environment/windRef", windRef)) {ROS_FATAL("Invalid parameters for -/environment/windRef- in param server!"); ros::shutdown();}
@@ -89,13 +86,14 @@ bool Environment::calcAirdata(last_letter_2_msgs::airdata_srv::Request& req, las
 //Calculate temperature
 void Environment::calcTemp()
 {
-    double altitude = states.z;
+    double altitude = abs(states.z);
+    // double altitude = -states.z;     2nd option
     airdata.temperature = T0 + altitude/1000.0 * L0;
 }
 
 void Environment::calcWind()
 {
-     //Call functionns
+     //Call functions
     double Va, input, temp[2];
     airdata.wind_x=-cos(windDir)*kwind*pow(abs(states.z)+0.001,surfSmooth);
     airdata.wind_y=-sin(windDir)*kwind*pow(abs(states.z)+0.001,surfSmooth); //abs is used to avoid exp(x,0) which may return nan
@@ -104,7 +102,7 @@ void Environment::calcWind()
     wind.x=airdata.wind_x;
     wind.y=airdata.wind_y;
     wind.z=airdata.wind_z;
-
+    
     if (isnan(wind.x) || isnan(wind.y) || isnan(wind.z))
     {
         ROS_FATAL("earth wind NAN in environmentNode!");
@@ -117,6 +115,7 @@ void Environment::calcWind()
     airspeed.x=states.u-wind.x;
     airspeed.y=states.v-wind.y;
     airspeed.z=states.w-wind.z;
+
     Va = sqrt(pow(airspeed.x,2)+pow(airspeed.y,2)+pow(airspeed.z,2));
 
     if (allowTurbulence)
@@ -162,7 +161,7 @@ void Environment::calcWind()
 
 void Environment::calcDens()
 {
-    double altitude = states.z;
+    double altitude = abs(states.z);
     double Hb = 0, Tb = T0, Pb = P0, L = L0;
     double alt2pressRatio = (Pb / P0) * pow(1 - (L / Tb) * (altitude/1000.0 - Hb), ((1000.0 * grav0) / (Rd * L))); //Corrected to 1 - (L/...)
     double alt2tempRatio =  airdata.temperature / T0;
@@ -174,7 +173,7 @@ void Environment::calcDens()
 //Calculate barometric pressure
 void Environment::calcPres()
 {
-    double altitude = states.z;
+    double altitude = abs(states.z);
     double pressure;
     double Hb = 0, Tb = T0, Pb = P0, L = L0;
     pressure = Pb * pow(1 - (L / Tb) * (altitude/1000.0 - Hb), ((1000.0 * grav0) / (Rd * L))); //Corrected to 1 - (L/...)
