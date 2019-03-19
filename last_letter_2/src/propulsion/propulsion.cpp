@@ -2,9 +2,9 @@
 #include "beardEngine.cpp"
 #include "electricEngine.cpp"
 
-Propulsion::Propulsion(Model *parent)
+Propulsion::Propulsion(Model *parent) : tfListener(tfBuffer)
 {
-    model=parent;
+    model = parent;
 }
 
 void Propulsion::calcWrench()
@@ -16,25 +16,17 @@ void Propulsion::calcWrench()
 
 void Propulsion::rotateWind()
 {
-    tf::Transform body_to_prop;
-    tf::Quaternion tempQuat;
-    // Construct transformation from body axes to mount frame
-    body_to_prop.setOrigin(tf::Vector3(0,0,0));     //set the tranlsation
-    tempQuat.setRPY(0,0,0);                 //set the rotation
-    body_to_prop.setRotation(tempQuat);
-    
-    // Transform the relative wind from body axes to propeller axes
-    tf::Vector3 bodyWind(model->u_r, model->v_r, model->w_r);
-    tf::Vector3 tempVect;
-    tempVect= body_to_prop*bodyWind;
+    //load the wind vector which will be tranformed
+    std::string motor_name_link="arm";
+    v_in.header.frame_id = model->airdata.header.frame_id;
+    v_in.vector.x = model->airdata.wind_x;
+    v_in.vector.y = model->airdata.wind_y;
+    v_in.vector.z = model->airdata.wind_z;
+    // std::cout<<"frame="<<v_in.header.frame_id<<"    x="<<v_in.vector.x<<" y="<<v_in.vector.y<<" z="<<v_in.vector.z<<std::endl;
+    v_out = tfBuffer.transform(v_in, motor_name_link);
+    // std::cout<<"frame="<<v_out.header.frame_id<<"         x="<<v_out.vector.x<<" y="<<v_out.vector.y<<" z="<<v_out.vector.z<<std::endl<<std::endl;
 
-    relativeWind.x = tempVect.getX();
-    relativeWind.y = tempVect.getY();
-    relativeWind.z = tempVect.getZ();
-
-    normalWind= relativeWind.x;
-
-    if (!std::isfinite(normalWind)) {ROS_FATAL("propulsion.cpp: NaN value in normalWind"); ros::shutdown();}
-    if (std::fabs(normalWind)>1e+160) {ROS_FATAL("propulsion.cpp/rotateWind: normalWind over 1e+160"); ros::shutdown();}
-
+    normalWind = v_out.vector.x;
+    if (!std::isfinite(normalWind)) { ROS_FATAL("propulsion.cpp: NaN value in normalWind"); ros::shutdown(); }
+    if (std::fabs(normalWind) > 1e+160) { ROS_FATAL("propulsion.cpp/rotateWind: normalWind over 1e+160"); ros::shutdown(); }
 }

@@ -104,7 +104,7 @@ ElectricEng::~ElectricEng()
 // Update motor rotational speed and calculate thrust
 void ElectricEng::calcThrust()
 {
-    printf("omega=%f\n", omega);
+    // printf("omega=%f\n", omega);
 
     rho = model->airdata.density;
     double inputMotor = model->control_signals.delta_t;
@@ -119,7 +119,7 @@ void ElectricEng::calcThrust()
     double engPower = Ei * (Im - I0);
     // printf("engPower=%f\n", engPower);
     double advRatio = normalWind / (std::fabs(omega) / 2.0 / M_PI) / propDiam; // Convert advance ratio to dimensionless units, not 1/rad
-    // printf("advRatio=%f\n", advRatio);
+    // printf("normalWind=%f\n", normalWind);
     // advRatio = std::max(advRatio, 0.0); // thrust advance ratio above zero, in lack of a better propeller model
     double propPower = propPowerPoly->evaluate(advRatio) * rho * pow(std::fabs(omega) / 2.0 / M_PI, 3) * pow(propDiam, 5);
     // printf("propPower=%f\n", propPower);

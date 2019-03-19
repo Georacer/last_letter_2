@@ -53,6 +53,8 @@ void Model::getStates()
         //		    connectToClient(); //Why this??
     }
     //get Positon, Rotation, Linear Vel, Angular Vel
+    model_states.header.stamp = states_srv.response.model_states.header.stamp;
+    model_states.header.frame_id = states_srv.response.model_states.header.frame_id;
     model_states.x = states_srv.response.model_states.x;
     model_states.y = states_srv.response.model_states.y;
     model_states.z = states_srv.response.model_states.z;
@@ -68,12 +70,11 @@ void Model::getStates()
 
     //the states exported from gazebo are expressed in NWU frame, but the calculations are based on NED frame
     //so convert gazebo data from NWU to NED to continue with calculations
+
     NWUtoNED(model_states.x, model_states.y, model_states.z);
     NWUtoNED(model_states.roll, model_states.pitch, model_states.yaw);
     NWUtoNED(model_states.u, model_states.v, model_states.w);
     NWUtoNED(model_states.p, model_states.q, model_states.r);
-
-    model_states.header.stamp = ros::Time::now(); // need fix
 }
 
 void Model::getControlSignals()
@@ -100,11 +101,11 @@ void Model::getControlSignals()
         //		    connectToClient(); //Why this??
     }
     //get delta_e, delta_r, delta_a, delta_t
+    control_signals.header.stamp = ros::Time::now(); 
     control_signals.delta_a = signals_srv.response.signals.delta_a;
     control_signals.delta_e = signals_srv.response.signals.delta_e;
     control_signals.delta_r = signals_srv.response.signals.delta_r;
     control_signals.delta_t = signals_srv.response.signals.delta_t;
-    control_signals.header.stamp = ros::Time::now(); // need fix
 }
 
 void Model::getAirdata()
@@ -119,15 +120,18 @@ void Model::getAirdata()
         else
         {
             ROS_ERROR("Failed to call service air_data\n");
-            //			break;
+            //break;
         }
     }
     else
     {
         ROS_ERROR("Service down, waiting reconnection...");
         airdata_client.waitForExistence();
-        //		    connectToClient(); //Why this??
+        //   connectToClient(); //Why this??
     }
+    
+    airdata.header.frame_id="body_FRD";
+    airdata.header.stamp = ros::Time::now();
     airdata.wind_x = air_data.response.airdata.wind_x;
     airdata.wind_y = air_data.response.airdata.wind_y;
     airdata.wind_z = air_data.response.airdata.wind_z;
@@ -169,13 +173,13 @@ void Model::calcWrenches()
 
 void Model::applyWrenches()
 {
-    model_wrenches.thrust = dynamics.propulsion->prop_wrenches.thrust; // y,z values with opposite sign
-    model_wrenches.forces[0] = dynamics.aerodynamics->aero_wrenches.drag;
-    model_wrenches.forces[1] = dynamics.aerodynamics->aero_wrenches.fy;
-    model_wrenches.forces[2] = dynamics.aerodynamics->aero_wrenches.lift;
-    model_wrenches.torques[0] = dynamics.aerodynamics->aero_wrenches.l + dynamics.propulsion->prop_wrenches.torque;
-    model_wrenches.torques[1] = dynamics.aerodynamics->aero_wrenches.m;
-    model_wrenches.torques[2] = dynamics.aerodynamics->aero_wrenches.n;
+    model_wrenches.thrust       = dynamics.propulsion->prop_wrenches.thrust; 
+    model_wrenches.forces[0]    = dynamics.aerodynamics->aero_wrenches.drag;
+    model_wrenches.forces[1]    = dynamics.aerodynamics->aero_wrenches.fy;
+    model_wrenches.forces[2]    = dynamics.aerodynamics->aero_wrenches.lift;
+    model_wrenches.torques[0]   = dynamics.aerodynamics->aero_wrenches.l + dynamics.propulsion->prop_wrenches.torque;
+    model_wrenches.torques[1]   = dynamics.aerodynamics->aero_wrenches.m;
+    model_wrenches.torques[2]   = dynamics.aerodynamics->aero_wrenches.n;
 
     //convert data on NWU frame that links in gazebo are expressed
     NEDtoNWU(model_wrenches.forces[0], model_wrenches.forces[1], model_wrenches.forces[2]);
@@ -200,7 +204,7 @@ void Model::applyWrenches()
     {
         ROS_ERROR("Service down, waiting reconnection...");
         apply_wrench_client.waitForExistence();
-        //		    connectToClient(); //Why this??
+        //    connectToClient(); //Why this??
     }
 }
 
@@ -222,6 +226,6 @@ void Model::simulationStep()
     {
         ROS_ERROR("Service down, waiting reconnection...");
         sim_step_client.waitForExistence();
-        //		    connectToClient(); //Why this??
+        //    connectToClient(); //Why this??
     }
 }

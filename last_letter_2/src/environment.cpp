@@ -67,19 +67,19 @@ Environment::Environment()
 
 }
 
-bool Environment::calcAirdata(last_letter_2_msgs::airdata_srv::Request& req, last_letter_2_msgs::airdata_srv::Response& res )
-{   
-    states=req.states;
+bool Environment::calcAirdata(last_letter_2_msgs::airdata_srv::Request &req, last_letter_2_msgs::airdata_srv::Response &res)
+{
+    states = req.states;
 
     calcTemp();
-    calcWind();    
+    calcWind();
     calcDens();
     calcPres();
     pub.publish(airdata);
 
-    res.airdata=airdata;
-    return true;
     // Send back airdata
+    res.airdata = airdata;
+    return true;
 }
 
 ///////////////////////
@@ -87,21 +87,21 @@ bool Environment::calcAirdata(last_letter_2_msgs::airdata_srv::Request& req, las
 void Environment::calcTemp()
 {
     double altitude = -states.z;
-    airdata.temperature = T0 + altitude/1000.0 * L0;
+    airdata.temperature = T0 + altitude / 1000.0 * L0;
 }
 
 void Environment::calcWind()
 {
-     //Call functions
+    //Call functions
     double Va, input, temp[2];
-    airdata.wind_x=-cos(windDir)*kwind*pow(abs(states.z)+0.001,surfSmooth);
-    airdata.wind_y=-sin(windDir)*kwind*pow(abs(states.z)+0.001,surfSmooth); //abs is used to avoid exp(x,0) which may return nan
-    airdata.wind_z=0;
+    airdata.wind_x = -cos(windDir) * kwind * pow(abs(states.z) + 0.001, surfSmooth);
+    airdata.wind_y = -sin(windDir) * kwind * pow(abs(states.z) + 0.001, surfSmooth); //abs is used to avoid exp(x,0) which may return nan
+    airdata.wind_z = 0;
     geometry_msgs::Vector3 wind;
-    wind.x=airdata.wind_x;
-    wind.y=airdata.wind_y;
-    wind.z=airdata.wind_z;
-    
+    wind.x = airdata.wind_x;
+    wind.y = airdata.wind_y;
+    wind.z = airdata.wind_z;
+
     if (isnan(wind.x) || isnan(wind.y) || isnan(wind.z))
     {
         ROS_FATAL("earth wind NAN in environmentNode!");
@@ -111,29 +111,29 @@ void Environment::calcWind()
 
     //claculate turbalent wind
     geometry_msgs::Vector3 airspeed;
-    airspeed.x=states.u-wind.x;
-    airspeed.y=states.v-wind.y;
-    airspeed.z=states.w-wind.z;
+    airspeed.x = states.u - wind.x;
+    airspeed.y = states.v - wind.y;
+    airspeed.z = states.w - wind.z;
 
-    Va = sqrt(pow(airspeed.x,2)+pow(airspeed.y,2)+pow(airspeed.z,2));
+    Va = sqrt(pow(airspeed.x, 2) + pow(airspeed.y, 2) + pow(airspeed.z, 2));
 
     if (allowTurbulence)
     {
-        input = (((double)rand()) / (RAND_MAX) - 0.5); //turbulence u-component
+        input = (((double)rand()) / (RAND_MAX)-0.5); //turbulence u-component
 
-        windDistU = windDistU*(1-Va/Lu*dt) + sigmau*sqrt(2*Va/(M_PI*Lu))*dt*input;
+        windDistU = windDistU * (1 - Va / Lu * dt) + sigmau * sqrt(2 * Va / (M_PI * Lu)) * dt * input;
 
-        input = (((double)rand()) / (RAND_MAX) - 0.5); //turbulence v-component
+        input = (((double)rand()) / (RAND_MAX)-0.5); //turbulence v-component
         temp[0] = windDistV[0];
         temp[1] = windDistV[1];
-        windDistV[1] = -pow(Va/Lu,2)*dt*temp[0] + temp[1] + sigmau*sqrt(3*Va/(M_PI*Lu))*Va/(sqrt(3)*Lu)*dt*input;
-        windDistV[0] = (1.0-2.0*Va/Lu*dt)*temp[0] + dt*temp[1] + sigmau*sqrt(3*Va/(M_PI*Lu))*dt*input;
+        windDistV[1] = -pow(Va / Lu, 2) * dt * temp[0] + temp[1] + sigmau * sqrt(3 * Va / (M_PI * Lu)) * Va / (sqrt(3) * Lu) * dt * input;
+        windDistV[0] = (1.0 - 2.0 * Va / Lu * dt) * temp[0] + dt * temp[1] + sigmau * sqrt(3 * Va / (M_PI * Lu)) * dt * input;
 
-        input = ((double)rand() / (RAND_MAX) - 0.5); //turbulence w-component
+        input = ((double)rand() / (RAND_MAX)-0.5); //turbulence w-component
         temp[0] = windDistW[0];
         temp[1] = windDistW[1];
-        windDistW[1] = -pow(Va/Lw,2)*dt*temp[0] + temp[1] + sigmaw*sqrt(3*Va/(M_PI*Lw))*Va/(sqrt(3)*Lw)*dt*input;
-        windDistW[0] = (1.0-2.0*Va/Lw*dt)*temp[0] + dt*temp[1] + sigmaw*sqrt(3*Va/(M_PI*Lw))*dt*input;
+        windDistW[1] = -pow(Va / Lw, 2) * dt * temp[0] + temp[1] + sigmaw * sqrt(3 * Va / (M_PI * Lw)) * Va / (sqrt(3) * Lw) * dt * input;
+        windDistW[0] = (1.0 - 2.0 * Va / Lw * dt) * temp[0] + dt * temp[1] + sigmaw * sqrt(3 * Va / (M_PI * Lw)) * dt * input;
     }
 
     if (isnan(windDistU) || isnan(windDistV[0]) || isnan(windDistW[0]))
@@ -155,16 +155,15 @@ void Environment::calcWind()
         std::cout << airdata.wind_x << " " << airdata.wind_y << " " << airdata.wind_z << std::endl;
         ros::shutdown();
     }
-    airdata.header.stamp = ros::Time::now();
 }
 
 void Environment::calcDens()
 {
     double altitude = -states.z;
     double Hb = 0, Tb = T0, Pb = P0, L = L0;
-    double alt2pressRatio = (Pb / P0) * pow(1 - (L / Tb) * (altitude/1000.0 - Hb), ((1000.0 * grav0) / (Rd * L))); //Corrected to 1 - (L/...)
-    double alt2tempRatio =  airdata.temperature / T0;
-    double density = rho * alt2pressRatio  / alt2tempRatio;
+    double alt2pressRatio = (Pb / P0) * pow(1 - (L / Tb) * (altitude / 1000.0 - Hb), ((1000.0 * grav0) / (Rd * L))); //Corrected to 1 - (L/...)
+    double alt2tempRatio = airdata.temperature / T0;
+    double density = rho * alt2pressRatio / alt2tempRatio;
     airdata.density = density;
 }
 
@@ -175,21 +174,19 @@ void Environment::calcPres()
     double altitude = -states.z;
     double pressure;
     double Hb = 0, Tb = T0, Pb = P0, L = L0;
-    pressure = Pb * pow(1 - (L / Tb) * (altitude/1000.0 - Hb), ((1000.0 * grav0) / (Rd * L))); //Corrected to 1 - (L/...)
+    pressure = Pb * pow(1 - (L / Tb) * (altitude / 1000.0 - Hb), ((1000.0 * grav0) / (Rd * L))); //Corrected to 1 - (L/...)
     airdata.pressure = pressure;
 }
-
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "environment_node");
     Environment env_object;
     ros::NodeHandle nh;
-    ros::ServiceServer envir_server=nh.advertiseService("last_letter_2/airdata", &Environment::calcAirdata, &env_object);
+    ros::ServiceServer envir_server = nh.advertiseService("last_letter_2/airdata", &Environment::calcAirdata, &env_object);
     pub = nh.advertise<last_letter_2_msgs::air_data>("last_letter_2/Environment", 1);
 
-
-    while(ros::ok())
+    while (ros::ok())
     {
         ros::spin();
     }

@@ -1,0 +1,532 @@
+<?xml version="1.0"?>
+<robot name="quadrotor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- body, airfoil sizes -->
+<xacro:property name="body_s" value="1" />   
+<!-- <xacro:property name="pi" value="3.1415" /> -->
+
+<!-- body link -->
+<xacro:property name="body_x" value="${body_s}" />
+<xacro:property name="body_y" value="${body_s}" />
+<xacro:property name="body_z" value="${body_s/5}" />
+<xacro:property name="body_m" value="2" />
+
+    <link name="body_FLU">
+        <visual>
+            <geometry>
+               <box size="${body_x} ${body_y} ${body_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <geometry>
+               <box size="${body_x} ${body_y} ${body_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <mass value="${body_m}" />
+             <inertia ixx="${1/12*body_m*(body_y*body_y+body_z*body_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*body_m*(body_x*body_x+body_z*body_z)}" izz="${1/12*body_m*(body_x*body_x+body_y*body_y)}" />
+        </inertial> 
+
+    </link>
+
+<xacro:property name="arm_x" value="${2*body_s}" />
+<xacro:property name="arm_y" value="${0.1*body_s}" />
+<xacro:property name="arm_z" value="${0.1*body_s}" />
+<xacro:property name="arm_m" value="${0.1*body_m}" />
+
+    <link name="arm_1">
+        <visual>
+        <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+               <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+        <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+               <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${arm_x/2} 0 0"/>
+            <mass value="${arm_m}" />
+            <inertia ixx="${1/12*arm_m*(arm_y*arm_y+arm_z*arm_z)}" ixy="0" ixz="0" iyz="0"
+                    iyy="${1/12*arm_m*(arm_x*arm_x+arm_z*arm_z)}" izz="${1/12*arm_m*(arm_x*arm_x+arm_y*arm_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="body_FLU_to_arm_1" type="fixed">
+        <origin xyz="${0.9*body_x/2} ${0.9*body_y/2} 0" rpy="0 0 ${pi/4}"/>
+        <parent link="body_FLU" />
+        <child link="arm_1" />
+    </joint>
+    
+    <link name="arm_2">
+        <visual>
+        <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+                <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+                <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${arm_x/2} 0 0"/>
+            <mass value="${arm_m}" />
+            <inertia ixx="${1/12*arm_m*(arm_y*arm_y+arm_z*arm_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*arm_m*(arm_x*arm_x+arm_z*arm_z)}" izz="${1/12*arm_m*(arm_x*arm_x+arm_y*arm_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="body_FLU_to_arm_2" type="fixed">
+        <origin xyz="-${0.9*body_x/2} ${0.9*body_y/2} 0" rpy="0 0 ${3/4*pi}"/>
+        <parent link="body_FLU" />
+        <child link="arm_2" />
+    </joint>
+
+        <link name="arm_3">
+        <visual>
+        <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+                <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+                <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${arm_x/2} 0 0"/>
+            <mass value="${arm_m}" />
+            <inertia ixx="${1/12*arm_m*(arm_y*arm_y+arm_z*arm_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*arm_m*(arm_x*arm_x+arm_z*arm_z)}" izz="${1/12*arm_m*(arm_x*arm_x+arm_y*arm_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="body_FLU_to_arm_3" type="fixed">
+        <origin xyz="-${0.9*body_x/2} -${0.9*body_y/2} 0" rpy="0 0 ${5/4*pi}"/>
+        <parent link="body_FLU" />
+        <child link="arm_3" />
+    </joint>
+
+        <link name="arm_4">
+        <visual>
+        <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+                <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="${arm_x/2} 0 0"/>
+            <geometry>
+                <box size="${arm_x} ${arm_y} ${arm_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${arm_x/2} 0 0"/>
+            <mass value="${arm_m}" />
+            <inertia ixx="${1/12*arm_m*(arm_y*arm_y+arm_z*arm_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*arm_m*(arm_x*arm_x+arm_z*arm_z)}" izz="${1/12*arm_m*(arm_x*arm_x+arm_y*arm_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="body_FLU_to_arm_4" type="fixed">
+        <origin xyz="${0.9*body_x/2} -${0.9*body_y/2} 0" rpy="0 0 ${7/4*pi}"/>
+        <parent link="body_FLU" />
+        <child link="arm_4" />
+    </joint>
+
+    ------------------------------------ motors
+
+
+<xacro:property name="motor_x" value="${0.2*body_s}" />
+<xacro:property name="motor_y" value="${0.2*body_s}" />
+<xacro:property name="motor_z" value="${0.2*body_s}" />
+<xacro:property name="motor_m" value="${0.1*body_m}" />
+
+     <link name="motor_1">
+        <visual>
+        <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <mass value="${motor_m}" />
+            <inertia ixx="${1/12*motor_m*(motor_y*motor_y+motor_z*motor_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*motor_m*(motor_x*motor_x+motor_z*motor_z)}" izz="${1/12*motor_m*(motor_x*motor_x+motor_y*motor_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="arm_1_to_motor_1" type="continuous">
+        <origin xyz="${arm_x} 0 0" rpy="0 0 0"/>
+        <parent link="arm_1" />
+        <child link="motor_1" />
+    </joint>
+
+         <link name="motor_2">
+        <visual>
+        <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <mass value="${motor_m}" />
+            <inertia ixx="${1/12*motor_m*(motor_y*motor_y+motor_z*motor_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*motor_m*(motor_x*motor_x+motor_z*motor_z)}" izz="${1/12*motor_m*(motor_x*motor_x+motor_y*motor_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="arm_2_to_motor_2" type="continuous">
+        <origin xyz="${arm_x} 0 0" rpy="0 0 0"/>
+        <parent link="arm_2" />
+        <child link="motor_2" />
+    </joint>
+
+         <link name="motor_3">
+        <visual>
+        <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <mass value="${motor_m}" />
+            <inertia ixx="${1/12*motor_m*(motor_y*motor_y+motor_z*motor_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*motor_m*(motor_x*motor_x+motor_z*motor_z)}" izz="${1/12*motor_m*(motor_x*motor_x+motor_y*motor_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="arm_3_to_motor_3" type="continuous">
+        <origin xyz="${arm_x} 0 0" rpy="0 0 0"/>
+        <parent link="arm_3" />
+        <child link="motor_3" />
+    </joint>
+
+    <link name="motor_4">
+        <visual>
+        <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <geometry>
+                <box size="${motor_x} ${motor_y} ${motor_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="${motor_x/2} 0 0"/>
+            <mass value="${motor_m}" />
+            <inertia ixx="${1/12*motor_m*(motor_y*motor_y+motor_z*motor_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*motor_m*(motor_x*motor_x+motor_z*motor_z)}" izz="${1/12*motor_m*(motor_x*motor_x+motor_y*motor_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="arm_4_to_motor_4" type="continuous">
+        <origin xyz="${arm_x} 0 0" rpy="0 0 0"/>
+        <parent link="arm_4" />
+        <child link="motor_4" />
+    </joint>
+
+ ------------------------------------- propellers
+<!-- arm link -->
+<xacro:property name="prop_arm_m" value="${body_m/20}" />
+<xacro:property name="prop_arm_r" value="${body_s/40}" />
+<xacro:property name="prop_arm_h" value="${body_s/40}" />
+    
+    <link name="prop_arm_1">
+        <visual>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="0 0 ${prop_arm_h/2}" />
+            <mass value="${prop_arm_m}" />
+            <inertia ixx="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" izz="${1/2*prop_arm_m*prop_arm_r*prop_arm_r}" />
+        </inertial>
+    </link>
+
+    <joint name="motor_1_to_prop_arm_1" type="continuous">
+        <origin xyz="${motor_x/2} 0 ${motor_z/2}" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <parent link="motor_1" />
+        <child link="prop_arm_1" />
+    </joint>
+
+        <link name="prop_arm_2">
+        <visual>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="0 0 ${prop_arm_h/2}" />
+            <mass value="${prop_arm_m}" />
+            <inertia ixx="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" izz="${1/2*prop_arm_m*prop_arm_r*prop_arm_r}" />
+        </inertial>
+    </link>
+
+    <joint name="motor_2_to_prop_arm_2" type="continuous">
+        <origin xyz="${motor_x/2} 0 ${motor_z/2}" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <parent link="motor_2" />
+        <child link="prop_arm_2" />
+    </joint>
+
+        <link name="prop_arm_3">
+        <visual>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="0 0 ${prop_arm_h/2}" />
+            <mass value="${prop_arm_m}" />
+            <inertia ixx="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" izz="${1/2*prop_arm_m*prop_arm_r*prop_arm_r}" />
+        </inertial>
+    </link>
+
+    <joint name="motor_3_to_prop_arm_3" type="continuous">
+        <origin xyz="${motor_x/2} 0 ${motor_z/2}" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <parent link="motor_3" />
+        <child link="prop_arm_3" />
+    </joint>
+
+        <link name="prop_arm_4">
+        <visual>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 ${prop_arm_h/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${prop_arm_r}" length="${prop_arm_h}" />
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="0 0 ${prop_arm_h/2}" />
+            <mass value="${prop_arm_m}" />
+            <inertia ixx="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*prop_arm_m*prop_arm_h*prop_arm_h+1/4*prop_arm_m*prop_arm_r*prop_arm_r}" izz="${1/2*prop_arm_m*prop_arm_r*prop_arm_r}" />
+        </inertial>
+    </link>
+
+    <joint name="motor_4_to_prop_arm_4" type="continuous">
+        <origin xyz="${motor_x/2} 0 ${motor_z/2}" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <parent link="motor_4" />
+        <child link="prop_arm_4" />
+    </joint>
+
+ 
+<!-- propeller links -->
+<xacro:property name="propeller_m" value="${body_m/20}" />
+<xacro:property name="propeller_x" value="${2*body_s}" />
+<xacro:property name="propeller_y" value="${body_s/10}" />   
+<xacro:property name="propeller_z" value="${body_s/40}" />   
+
+   <link name="propeller_1">
+        <visual>
+        <!-- <origin xyz="${motor_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <mass value="${propeller_m}" />
+            <inertia ixx="${1/12*propeller_m*(propeller_y*propeller_y+propeller_z*propeller_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*propeller_m*(propeller_x*propeller_x+propeller_z*propeller_z)}" izz="${1/12*propeller_m*(propeller_x*propeller_x+propeller_y*propeller_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="motor_1_to_prop_1" type="continuous">
+        <origin xyz="0 0 ${prop_arm_h}" rpy="0 0 0"/>
+        <axis xyz="0 0 1" />
+        <parent link="prop_arm_1" />
+        <child link="propeller_1" />
+    </joint>
+    
+       <link name="propeller_2">
+        <visual>
+        <!-- <origin xyz="${motor_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <mass value="${propeller_m}" />
+            <inertia ixx="${1/12*propeller_m*(propeller_y*propeller_y+propeller_z*propeller_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*propeller_m*(propeller_x*propeller_x+propeller_z*propeller_z)}" izz="${1/12*propeller_m*(propeller_x*propeller_x+propeller_y*propeller_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="motor_2_to_prop_2" type="continuous">
+        <origin xyz="0 0 ${prop_arm_h}" rpy="0 0 0"/>
+        <axis xyz="0 0 1" />
+        <parent link="prop_arm_2" />
+        <child link="propeller_2" />
+    </joint>
+
+       <link name="propeller_3">
+        <visual>
+        <!-- <origin xyz="${motor_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <mass value="${propeller_m}" />
+            <inertia ixx="${1/12*propeller_m*(propeller_y*propeller_y+propeller_z*propeller_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*propeller_m*(propeller_x*propeller_x+propeller_z*propeller_z)}" izz="${1/12*propeller_m*(propeller_x*propeller_x+propeller_y*propeller_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="motor_3_to_prop_3" type="continuous">
+        <origin xyz="0 0 ${prop_arm_h}" rpy="0 0 0"/>
+        <axis xyz="0 0 1" />
+        <parent link="prop_arm_3" />
+        <child link="propeller_3" />
+    </joint>
+
+       <link name="propeller_4">
+        <visual>
+        <!-- <origin xyz="${motor_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <geometry>
+                <box size="${propeller_x} ${propeller_y} ${propeller_z}" />
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <!-- <origin xyz="${propeller_x/2} 0 0"/> -->
+            <mass value="${propeller_m}" />
+            <inertia ixx="${1/12*propeller_m*(propeller_y*propeller_y+propeller_z*propeller_z)}" ixy="0" ixz="0" iyz="0"
+                iyy="${1/12*propeller_m*(propeller_x*propeller_x+propeller_z*propeller_z)}" izz="${1/12*propeller_m*(propeller_x*propeller_x+propeller_y*propeller_y)}" />
+        </inertial> 
+    </link>
+
+    <joint name="motor_4_to_prop_4" type="continuous">
+        <origin xyz="0 0 ${prop_arm_h}" rpy="0 0 0"/>
+        <axis xyz="0 0 1" />
+        <parent link="prop_arm_4" />
+        <child link="propeller_4" />
+    </joint>
+</robot>

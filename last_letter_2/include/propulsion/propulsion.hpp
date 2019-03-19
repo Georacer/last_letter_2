@@ -7,6 +7,11 @@ public:
   double normalWind;
   double rotationDir; // motor direction of rotation
 
+  tf2_ros::Buffer tfBuffer;
+  tf2_ros::TransformListener tfListener;
+  geometry_msgs::TransformStamped transformStamped;
+  geometry_msgs::Vector3Stamped v_in, v_out;
+    
   last_letter_2_msgs::prop_wrenches prop_wrenches;
   Model *model;
   Propulsion(Model *);

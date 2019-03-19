@@ -186,6 +186,7 @@ class model_plugin : public ModelPlugin
         position = model->GetLink("airfoil")->WorldPose().Pos();
 
         model_states.header.stamp = ros::Time::now();
+        model_states.header.frame_id = "body_FLU";
         model_states.x = position[0];
         model_states.y = position[1];
         model_states.z = position[2];
