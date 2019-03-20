@@ -33,8 +33,6 @@ add_executable(controller_mediator src/controller_mediator.cpp)
 add_executable(environment src/environment.cpp)
 add_executable(controller src/controller.cpp)
 
-add_executable(tf_listener src/tf_listener.cpp)
-
 add_dependencies(joy2chan ${catkin_EXPORTED_TARGETS})
 add_dependencies(environment ${catkin_EXPORTED_TARGETS})
 add_dependencies(chan2basics ${catkin_EXPORTED_TARGETS})
@@ -48,9 +46,6 @@ target_link_libraries(core ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 target_link_libraries(controller_mediator ${catkin_LIBRARIES})
 target_link_libraries(environment ${catkin_LIBRARIES})
 target_link_libraries(controller ${catkin_LIBRARIES})
-
-
-target_link_libraries(tf_listener ${catkin_LIBRARIES})
 
 
 
