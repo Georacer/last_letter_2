@@ -11,6 +11,7 @@ find_package(catkin REQUIRED
   last_letter_2_msgs
   last_letter_2_libs
   tf2_ros
+  tf2_geometry_msgs
 )
 find_package(Boost REQUIRED)
 

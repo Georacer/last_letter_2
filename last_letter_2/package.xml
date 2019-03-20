@@ -19,6 +19,7 @@
     <build_depend>last_letter_2_msgs</build_depend>
     <build_depend>last_letter_2_libs</build_depend>
     <build_depend>kdl_parser</build_depend>
+    <build_depend>tf2_geometry_msgs</build_depend>
 
     <build_export_depend>geometry_msgs</build_export_depend>
     <build_export_depend>roscpp</build_export_depend>
@@ -28,6 +29,7 @@
     <build_export_depend>last_letter_2_msgs</build_export_depend>
     <build_export_depend>last_letter_2_libs</build_export_depend>
     <build_export_depend>kdl_parser</build_export_depend>
+    <build_export_depend>tf2_geometry_msgs</build_export_depend>
 
     <exec_depend>roscpp</exec_depend>
     <exec_depend>std_msgs</exec_depend>
@@ -37,6 +39,7 @@
     <exec_depend>last_letter_2_msgs</exec_depend>
     <exec_depend>last_letter_2_libs</exec_depend>
     <exec_depend>kdl_parser</exec_depend>
+    <exec_depend>tf2_geometry_msgs</exec_depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>
